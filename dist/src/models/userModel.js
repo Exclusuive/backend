@@ -18,11 +18,14 @@ const pg_1 = require("pg");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const client = new pg_1.Client({
-    user: process.env.PG_USER,
-    host: process.env.PG_HOST,
-    database: process.env.PG_DATABASE,
-    password: process.env.PG_PASSWORD,
-    port: Number(process.env.PG_PORT),
+    user: process.env.PG_USER || "postgres",
+    host: process.env.PG_HOST || "localhost",
+    database: process.env.PG_DATABASE || "your_database",
+    password: process.env.PG_PASSWORD || "your_password",
+    port: Number(process.env.PG_PORT) || 5432,
+    ssl: {
+        rejectUnauthorized: false, // Render의 SSL 인증서가 필요 없음
+    },
 });
 client.connect();
 // **Define User Model Functions**

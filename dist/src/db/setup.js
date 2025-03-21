@@ -21,11 +21,10 @@ const client = new pg_1.Client({
     database: process.env.PG_DATABASE || "your_database",
     password: process.env.PG_PASSWORD || "your_password",
     port: Number(process.env.PG_PORT) || 5432,
+    ssl: {
+        rejectUnauthorized: false, // Render의 SSL 인증서가 필요 없음
+    },
 });
-console.log(process.env.PG_USER);
-console.log(process.env.PG_HOST);
-console.log(process.env.PG_DATABASE);
-console.log(process.env.PG_PASSWORD);
 const checkTableExists = (tableName) => __awaiter(void 0, void 0, void 0, function* () {
     const query = `
     SELECT EXISTS (
