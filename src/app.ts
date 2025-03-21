@@ -22,6 +22,11 @@ app.use(cors());
 const swaggerPath = path.join(__dirname, "./swagger/swagger.yaml");
 const swaggerDocument = YAML.load(swaggerPath);
 
+// Health Check Route
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).json({ status: "ok", message: "Server is running" });
+});
+
 // Use Routes
 app.use("/users", userRoutes);
 app.use("/collections", collectionRoutes);

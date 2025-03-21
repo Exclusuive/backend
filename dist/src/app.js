@@ -53,6 +53,10 @@ app.use((0, cors_1.default)());
 // Swagger YAML Setup
 const swaggerPath = path_1.default.join(__dirname, "./swagger/swagger.yaml");
 const swaggerDocument = yamljs_1.default.load(swaggerPath);
+// Health Check Route
+app.get("/", (req, res) => {
+    res.status(200).json({ status: "ok", message: "Server is running" });
+});
 // Use Routes
 app.use("/users", userRoutes_1.default);
 app.use("/collections", collectionRoutes_1.default);
