@@ -1,75 +1,65 @@
-import { Request, Response, NextFunction } from "express";
+// src/controllers/userController.ts
+import { Request, Response, RequestHandler } from "express";
 import { UserModel } from "../models/userModel";
 
-// **Get All Users**
-export const getAllUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const users = await UserModel.getAllUsers();
-    res.status(200).json(users);
-  } catch (err) {
-    next(err); // Pass error to Express error handler
-  }
-};
+export const UserController = {
+  // **Get All Users**
+  getAllUsers: (async (req: Request, res: Response) => {
+    try {
+      const users = await UserModel.getAllUsers();
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch users." });
+    }
+  }) as RequestHandler,
 
-// **Get User by ID**
-export const getUserById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const user = await UserModel.getUserById(req.params.id);
-    if (!user) return res.status(404).json({ error: "User not found" });
-    res.status(200).json(user);
-  } catch (err) {
-    next(err);
-  }
-};
+  // **Get User by ID**
+  getUserById: (async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const user = await UserModel.getUserById(id);
+      if (!user) return res.status(404).json({ error: "User not found." });
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch user." });
+    }
+  }) as unknown as RequestHandler,
 
-// **Create New User**
-export const createUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const newUser = await UserModel.createUser(req.body);
-    res.status(201).json({ message: "User created", user: newUser });
-  } catch (err) {
-    next(err);
-  }
-};
+  // **Create New User**
+  createUser: (async (req: Request, res: Response) => {
+    try {
+      const userData = req.body;
+      const newUser = await UserModel.createUser(userData);
+      res.status(201).json(newUser);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create user." });
+    }
+  }) as RequestHandler,
 
-// **Update User**
-export const updateUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const updatedUser = await UserModel.updateUser(req.params.id, req.body);
-    if (!updatedUser) return res.status(404).json({ error: "User not found" });
-    res.status(200).json({ message: "User updated", user: updatedUser });
-  } catch (err) {
-    next(err);
-  }
-};
+  // **Update User**
+  updateUser: (async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      const updatedUser = await UserModel.updateUser(id, updateData);
+      if (!updatedUser)
+        return res.status(404).json({ error: "User not found." });
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update user." });
+    }
+  }) as unknown as RequestHandler,
 
-// **Delete User**
-export const deleteUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const deletedUser = await UserModel.deleteUser(req.params.id);
-    if (!deletedUser) return res.status(404).json({ error: "User not found" });
-    res.status(200).json({ message: "User deleted", user: deletedUser });
-  } catch (err) {
-    next(err);
-  }
+  // **Delete User**
+  deleteUser: (async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const deletedUser = await UserModel.deleteUser(id);
+      if (!deletedUser)
+        return res.status(404).json({ error: "User not found." });
+      res.status(200).json(deletedUser);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete user." });
+    }
+  }) as unknown as RequestHandler,
 };

@@ -11,19 +11,23 @@ const client = new Client({
   port: Number(process.env.PG_PORT) || 5432,
 });
 
-const checkTableExists = async (): Promise<boolean> => {
+console.log(process.env.PG_USER);
+console.log(process.env.PG_HOST);
+console.log(process.env.PG_DATABASE);
+console.log(process.env.PG_PASSWORD);
+
+const checkTableExists = async (tableName: string): Promise<boolean> => {
   const query = `
     SELECT EXISTS (
       SELECT FROM information_schema.tables 
-      WHERE table_name = 'users'
+      WHERE table_name = $1
     );
   `;
-
   try {
-    const res = await client.query(query);
+    const res = await client.query(query, [tableName]);
     return res.rows[0].exists;
   } catch (err) {
-    console.error("❌ Error checking users table existence:", err);
+    console.error(`❌ Error checking ${tableName} table existence:`, err);
     return false;
   }
 };
@@ -32,24 +36,14 @@ const createUsersTable = async () => {
   const query = `
     CREATE TABLE users (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      email VARCHAR(255) NOT NULL UNIQUE,
-      nickname VARCHAR(255) NOT NULL UNIQUE,
+      address TEXT NOT NULL UNIQUE,
+      profileImg TEXT,
       name VARCHAR(255) NOT NULL,
-      profile_url TEXT,
-      vegetarian_stage VARCHAR(50) NOT NULL,
-      vegetarian_start_year INT NOT NULL,
-      community_points INT NOT NULL DEFAULT 0,
-      push_notification BOOLEAN NOT NULL DEFAULT TRUE,
-      advertising_consent BOOLEAN NOT NULL DEFAULT FALSE,
-      like_notification BOOLEAN NOT NULL DEFAULT TRUE,
-      comment_notification BOOLEAN NOT NULL DEFAULT TRUE,
-      message_notification BOOLEAN NOT NULL DEFAULT TRUE,
-      usage_restriction TEXT,
+      description TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `;
-
   try {
     await client.query(query);
     console.log("✅ users table created successfully");
@@ -58,33 +52,48 @@ const createUsersTable = async () => {
   }
 };
 
-const checkUserExists = async (): Promise<boolean> => {
-  const query = "SELECT COUNT(*) FROM users;";
+const createCollectionsTable = async () => {
+  const query = `
+    CREATE TABLE collections (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      type VARCHAR(100) NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      bannerImg TEXT,
+      description TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
   try {
-    const res = await client.query(query);
+    await client.query(query);
+    console.log("✅ collections table created successfully");
+  } catch (err) {
+    console.error("❌ Error creating collections table:", err);
+  }
+};
+
+const checkRowExists = async (table: string): Promise<boolean> => {
+  try {
+    const res = await client.query(`SELECT COUNT(*) FROM ${table};`);
     return parseInt(res.rows[0].count, 10) > 0;
   } catch (err) {
-    console.error("❌ Error checking user existence:", err);
+    console.error(`❌ Error checking data in ${table}:`, err);
     return false;
   }
 };
 
 const insertSampleUser = async () => {
   const query = `
-    INSERT INTO users (email, nickname, name, profile_url, vegetarian_stage, vegetarian_start_year)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO users (address, profileImg, name, description)
+    VALUES ($1, $2, $3, $4)
     RETURNING *;
   `;
-
   const values = [
-    "test@example.com",
-    "testuser",
-    "Test User",
-    "https://example.com/profile.jpg",
-    "Vegan",
-    2020,
+    "0x123456789abcdef",
+    "https://example.com/avatar.png",
+    "Sample User",
+    "This is a sample user for testing purposes.",
   ];
-
   try {
     const res = await client.query(query, values);
     console.log("✅ Sample user inserted:", res.rows[0]);
@@ -93,22 +102,52 @@ const insertSampleUser = async () => {
   }
 };
 
+const insertSampleCollection = async () => {
+  const query = `
+    INSERT INTO collections (type, name, bannerImg, description)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *;
+  `;
+  const values = [
+    "Art",
+    "Nature Collection",
+    "https://example.com/banner.jpg",
+    "A collection of nature-inspired art pieces.",
+  ];
+  try {
+    const res = await client.query(query, values);
+    console.log("✅ Sample collection inserted:", res.rows[0]);
+  } catch (err) {
+    console.error("❌ Error inserting sample collection:", err);
+  }
+};
+
 const setupDatabase = async () => {
   try {
     await client.connect();
 
-    const tableExists = await checkTableExists();
-    if (!tableExists) {
+    if (!(await checkTableExists("users"))) {
       await createUsersTable();
     } else {
-      console.log("⚡ users table already exists, skipping creation.");
+      console.log("⚡ users table already exists");
     }
 
-    const userExists = await checkUserExists();
-    if (!userExists) {
+    if (!(await checkRowExists("users"))) {
       await insertSampleUser();
     } else {
-      console.log("⚡ Sample user already exists, skipping insertion.");
+      console.log("⚡ Sample user already exists");
+    }
+
+    if (!(await checkTableExists("collections"))) {
+      await createCollectionsTable();
+    } else {
+      console.log("⚡ collections table already exists");
+    }
+
+    if (!(await checkRowExists("collections"))) {
+      await insertSampleCollection();
+    } else {
+      console.log("⚡ Sample collection already exists");
     }
   } catch (err) {
     console.error("❌ Error in setupDatabase:", err);

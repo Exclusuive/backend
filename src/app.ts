@@ -2,8 +2,11 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes";
+import collectionRoutes from "./routes/collectionRoutes";
+
 import swaggerUi from "swagger-ui-express";
-import swaggerDocument from "../build/swagger-output.json";
+import YAML from "yamljs";
+import path from "path";
 
 dotenv.config();
 
@@ -15,8 +18,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-// Use User Routes
+// Swagger YAML Setup
+const swaggerPath = path.join(__dirname, "./swagger/swagger.yaml");
+const swaggerDocument = YAML.load(swaggerPath);
+
+// Use Routes
 app.use("/users", userRoutes);
+app.use("/collections", collectionRoutes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Global Error Handler

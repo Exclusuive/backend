@@ -1,3 +1,4 @@
+// src/models/userModel.ts
 import { Client } from "pg";
 import dotenv from "dotenv";
 
@@ -31,34 +32,18 @@ export const UserModel = {
 
   // **Create New User**
   async createUser(userData: {
-    email: string;
-    nickname: string;
+    address: string;
+    profileImg?: string;
     name: string;
-    profile_url?: string;
-    vegetarian_stage: string;
-    vegetarian_start_year: number;
+    description?: string;
   }) {
-    const {
-      email,
-      nickname,
-      name,
-      profile_url,
-      vegetarian_stage,
-      vegetarian_start_year,
-    } = userData;
+    const { address, profileImg, name, description } = userData;
 
     const query = `
-      INSERT INTO users (email, nickname, name, profile_url, vegetarian_stage, vegetarian_start_year)
-      VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+      INSERT INTO users (address, profileImg, name, description)
+      VALUES ($1, $2, $3, $4) RETURNING *;
     `;
-    const values = [
-      email,
-      nickname,
-      name,
-      profile_url,
-      vegetarian_stage,
-      vegetarian_start_year,
-    ];
+    const values = [address, profileImg, name, description];
 
     const result = await client.query(query, values);
     return result.rows[0]; // Return the created user
@@ -68,12 +53,10 @@ export const UserModel = {
   async updateUser(
     id: string,
     updateData: Partial<{
-      email: string;
-      nickname: string;
+      address: string;
+      profileImg?: string;
       name: string;
-      profile_url?: string;
-      vegetarian_stage: string;
-      vegetarian_start_year: number;
+      description?: string;
     }>
   ) {
     // Dynamically build the query based on provided fields
