@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import collectionRoutes from "./routes/collectionRoutes";
+import s3Routes from "./routes/s3Routes";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import path from "path";
@@ -30,6 +31,7 @@ app.get("/", (req: Request, res: Response) => {
 // Use Routes
 app.use("/users", userRoutes);
 app.use("/collections", collectionRoutes);
+app.use("/s3", s3Routes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Global Error Handler
