@@ -53,8 +53,7 @@ const createUsersTable = async () => {
 const createCollectionsTable = async () => {
   const query = `
     CREATE TABLE collections (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      type VARCHAR(100) NOT NULL,
+      id VARCHAR(100) PRIMARY KEY NOT NULL,
       name VARCHAR(255) NOT NULL,
       bannerImg TEXT,
       description TEXT,
@@ -102,12 +101,12 @@ const insertSampleUser = async () => {
 
 const insertSampleCollection = async () => {
   const query = `
-    INSERT INTO collections (type, name, bannerImg, description)
+    INSERT INTO collections (id, name, bannerImg, description)
     VALUES ($1, $2, $3, $4)
     RETURNING *;
   `;
   const values = [
-    "Art",
+    "0x6yuguigug788t87ghojuj09hguibibo0",
     "Nature Collection",
     "https://example.com/banner.jpg",
     "A collection of nature-inspired art pieces.",

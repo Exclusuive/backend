@@ -33,20 +33,32 @@ export const CollectionModel = {
     return result.rows[0]; // Return single collection
   },
 
+  async getCollectionsByObjectIds(objectIds: string[]) {
+    if (objectIds.length === 0) return [];
+
+    const placeholders = objectIds
+      .map((_, index) => `$${index + 1}`)
+      .join(", ");
+    const query = `SELECT * FROM collections WHERE id IN (${placeholders});`;
+
+    const result = await client.query(query, objectIds);
+    return result.rows;
+  },
+
   // **Create New Collection**
   async createCollection(collectionData: {
-    type: string;
+    id: string;
     name: string;
     bannerImg?: string;
     description?: string;
   }) {
-    const { type, name, bannerImg, description } = collectionData;
+    const { id, name, bannerImg, description } = collectionData;
 
     const query = `
-      INSERT INTO collections (type, name, bannerImg, description)
+      INSERT INTO collections (id, name, bannerImg, description)
       VALUES ($1, $2, $3, $4) RETURNING *;
     `;
-    const values = [type, name, bannerImg, description];
+    const values = [id, name, bannerImg, description];
 
     const result = await client.query(query, values);
     return result.rows[0]; // Return the created collection

@@ -26,6 +26,27 @@ export const CollectionController = {
     }
   }) as unknown as RequestHandler,
 
+  // **Get Collections by objectIds**
+  getCollectionsByObjectIds: (async (req: Request, res: Response) => {
+    try {
+      const { objectIds } = req.body;
+
+      if (!Array.isArray(objectIds)) {
+        return res.status(400).json({ error: "objectIds must be an array." });
+      }
+
+      const collections = await CollectionModel.getCollectionsByObjectIds(
+        objectIds
+      );
+      res.status(200).json(collections);
+    } catch (error) {
+      console.error("Error in getCollectionsByObjectIds:", error);
+      res
+        .status(500)
+        .json({ error: "Failed to fetch collections by objectIds." });
+    }
+  }) as unknown as RequestHandler,
+
   // **Create New Collection**
   createCollection: (async (req: Request, res: Response) => {
     try {

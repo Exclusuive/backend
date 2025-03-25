@@ -35,6 +35,23 @@ exports.CollectionController = {
             res.status(500).json({ error: "Failed to fetch collection." });
         }
     })),
+    // **Get Collections by objectIds**
+    getCollectionsByObjectIds: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { objectIds } = req.body;
+            if (!Array.isArray(objectIds)) {
+                return res.status(400).json({ error: "objectIds must be an array." });
+            }
+            const collections = yield collectionModel_1.CollectionModel.getCollectionsByObjectIds(objectIds);
+            res.status(200).json(collections);
+        }
+        catch (error) {
+            console.error("Error in getCollectionsByObjectIds:", error);
+            res
+                .status(500)
+                .json({ error: "Failed to fetch collections by objectIds." });
+        }
+    })),
     // **Create New Collection**
     createCollection: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {

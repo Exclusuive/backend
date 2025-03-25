@@ -46,15 +46,27 @@ exports.CollectionModel = {
             return result.rows[0]; // Return single collection
         });
     },
+    getCollectionsByObjectIds(objectIds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (objectIds.length === 0)
+                return [];
+            const placeholders = objectIds
+                .map((_, index) => `$${index + 1}`)
+                .join(", ");
+            const query = `SELECT * FROM collections WHERE id IN (${placeholders});`;
+            const result = yield client.query(query, objectIds);
+            return result.rows;
+        });
+    },
     // **Create New Collection**
     createCollection(collectionData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { type, name, bannerImg, description } = collectionData;
+            const { id, name, bannerImg, description } = collectionData;
             const query = `
-      INSERT INTO collections (type, name, bannerImg, description)
+      INSERT INTO collections (id, name, bannerImg, description)
       VALUES ($1, $2, $3, $4) RETURNING *;
     `;
-            const values = [type, name, bannerImg, description];
+            const values = [id, name, bannerImg, description];
             const result = yield client.query(query, values);
             return result.rows[0]; // Return the created collection
         });
