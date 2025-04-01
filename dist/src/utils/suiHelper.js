@@ -1,0 +1,37 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLayerImageUrls = getLayerImageUrls;
+const client_1 = require("@mysten/sui/client");
+const client = new client_1.SuiClient({ url: (0, client_1.getFullnodeUrl)("testnet") });
+function getLayerImageUrls(baseObjectId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const dynamicFields = yield client.getDynamicFields({
+            parentId: baseObjectId,
+        });
+        const objectIds = dynamicFields.data.map((f) => f.objectId);
+        const objects = yield client.multiGetObjects({
+            ids: objectIds,
+            options: { showContent: true },
+        });
+        const imageUrls = objects.map((obj) => {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+            try {
+                return (_j = (_h = (_g = (_f = (_e = (_d = (_c = (_b = (_a = obj.data) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.fields) === null || _c === void 0 ? void 0 : _c.value) === null || _d === void 0 ? void 0 : _d.fields) === null || _e === void 0 ? void 0 : _e.socket) === null || _f === void 0 ? void 0 : _f.fields) === null || _g === void 0 ? void 0 : _g.type) === null || _h === void 0 ? void 0 : _h.fields) === null || _j === void 0 ? void 0 : _j.img_url;
+            }
+            catch (e) {
+                console.error("Failed to extract img_url:", e);
+                return null;
+            }
+        });
+        return imageUrls.filter((url) => typeof url === "string");
+    });
+}

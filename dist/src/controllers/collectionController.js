@@ -11,6 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CollectionController = void 0;
 const collectionModel_1 = require("../models/collectionModel");
+const suiHelper_1 = require("../utils/suiHelper");
+const imageMerge_1 = require("../utils/imageMerge");
+const uploadToS3_1 = require("../utils/uploadToS3");
 exports.CollectionController = {
     // **Get All Collections**
     getAllCollections: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -90,4 +93,20 @@ exports.CollectionController = {
             res.status(500).json({ error: "Failed to delete collection." });
         }
     })),
+    createDynamicImage: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { baseObjectId } = req.params;
+        try {
+            const imageUrls = yield (0, suiHelper_1.getLayerImageUrls)(baseObjectId);
+            const imageBuffer = yield (0, imageMerge_1.mergeImages)(imageUrls);
+            const fileUrl = yield (0, uploadToS3_1.uploadImageBufferToS3)(imageBuffer, `Base/${baseObjectId}.png`);
+            res.status(200).json({
+                message: "Image generated and uploaded",
+                imageUrl: fileUrl,
+            });
+        }
+        catch (error) {
+            console.error("generateDynamicImage error:", error);
+            res.status(500).json({ error: "Failed to generate image" });
+        }
+    }),
 };
