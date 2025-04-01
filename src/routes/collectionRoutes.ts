@@ -13,7 +13,7 @@ router.put("/:id", CollectionController.updateCollection);
 router.delete("/:id", CollectionController.deleteCollection);
 router.get(
   "/generate-image/:baseObjectId",
-  CollectionController.createDynamicImage,
+  CollectionController.updateDynamicImage,
 );
 
 export default router;

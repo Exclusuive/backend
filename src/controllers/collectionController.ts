@@ -93,7 +93,7 @@ export const CollectionController = {
     }
   }) as unknown as RequestHandler,
 
-  createDynamicImage: async (req, res) => {
+  updateDynamicImage: async (req, res) => {
     const { baseObjectId } = req.params;
     try {
       const imageUrls = await getLayerImageUrls(baseObjectId);
