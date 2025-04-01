@@ -12,7 +12,7 @@ router.post("/", CollectionController.createCollection);
 router.put("/:id", CollectionController.updateCollection);
 router.delete("/:id", CollectionController.deleteCollection);
 router.get(
-  "/generate-image/:baseObjectId",
+  "/update-image/:baseObjectId",
   CollectionController.updateDynamicImage,
 );
 
