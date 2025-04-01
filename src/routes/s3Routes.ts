@@ -25,7 +25,7 @@ router.post("/requestS3Permission", async (req: any, res: any) => {
         .json({ error: "fileName and fileType are required" });
     }
     console.log(fileName);
-    const key = `${fileName}_${Date.now()}`;
+    const key = `${fileName}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME!,
