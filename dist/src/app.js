@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -54,7 +45,6 @@ const s3Routes_1 = __importDefault(require("./routes/s3Routes"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const yamljs_1 = __importDefault(require("yamljs"));
 const path_1 = __importDefault(require("path"));
-const axios_1 = __importDefault(require("axios"));
 dotenv.config();
 const app = (0, express_1.default)();
 app.set("port", 8080);
@@ -80,20 +70,24 @@ app.use((err, req, res, next) => {
         .status(err.status || 500)
         .json({ error: err.message || "Internal Server Error" });
 });
+keepServerAlive();
+setInterval(keepServerAlive, 600000);
 // Keep Server Alive by Sending Requests to Itself Every 14 Minutes
-const keepServerAlive = () => {
-    const url = `http://localhost:${app.get("port")}/`;
-    setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const response = yield axios_1.default.get(url);
-            console.log("🔄 Keep-alive request sent:", response.data);
-        }
-        catch (error) {
-            console.error("❌ Keep-alive request failed:", error.message);
-        }
-    }), 10 * 60 * 1000); // 14 minutes in milliseconds
-};
+function keepServerAlive() {
+    const now = new Date().toLocaleString(); // 현재 시각 (로컬 시간대 기준)
+    const url = `https://backend-iiqs.onrender.com/${app.get("port")}/`;
+    fetch(url)
+        .then((res) => {
+        if (!res.ok)
+            throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+    })
+        .then((data) => console.log(now, "data length:", data.length))
+        .catch((error) => {
+        console.error("Error fetching data:", error);
+    });
+} // 10 minutes in milliseconds
 app.listen(app.get("port"), () => {
     console.log(`🚀 Server running on port ${app.get("port")}`);
-    keepServerAlive(); // Start keep-alive requests
+    // keepServerAlive(); // Start keep-alive requests
 });

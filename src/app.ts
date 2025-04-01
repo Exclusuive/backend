@@ -42,20 +42,26 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     .json({ error: err.message || "Internal Server Error" });
 });
 
+keepServerAlive();
+
+setInterval(keepServerAlive, 600000);
 // Keep Server Alive by Sending Requests to Itself Every 14 Minutes
-const keepServerAlive = () => {
-  const url = `http://localhost:${app.get("port")}/`;
-  setInterval(async () => {
-    try {
-      const response = await axios.get(url);
-      console.log("🔄 Keep-alive request sent:", response.data);
-    } catch (error) {
-      console.error("❌ Keep-alive request failed:", error.message);
-    }
-  }, 10 * 60 * 1000); // 14 minutes in milliseconds
-};
+function keepServerAlive() {
+  const now = new Date().toLocaleString(); // 현재 시각 (로컬 시간대 기준)
+
+  const url = `https://backend-iiqs.onrender.com/${app.get("port")}/`;
+  fetch(url)
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
+    .then((data) => console.log(now, "data length:", data.length))
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+} // 10 minutes in milliseconds
 
 app.listen(app.get("port"), () => {
   console.log(`🚀 Server running on port ${app.get("port")}`);
-  keepServerAlive(); // Start keep-alive requests
+  // keepServerAlive(); // Start keep-alive requests
 });
