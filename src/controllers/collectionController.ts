@@ -1,6 +1,9 @@
 // src/controllers/collectionController.ts
 import { Request, Response, RequestHandler } from "express";
 import { CollectionModel } from "../models/collectionModel";
+import { getLayerImageUrls } from "../utils/suiHelper";
+import { mergeImages } from "../utils/imageMerge";
+import { uploadImageBufferToS3 } from "../utils/uploadToS3";
 
 export const CollectionController = {
   // **Get All Collections**
@@ -36,7 +39,7 @@ export const CollectionController = {
       }
 
       const collections = await CollectionModel.getCollectionsByObjectIds(
-        objectIds
+        objectIds,
       );
       res.status(200).json(collections);
     } catch (error) {
@@ -52,7 +55,7 @@ export const CollectionController = {
     try {
       const collectionData = req.body;
       const newCollection = await CollectionModel.createCollection(
-        collectionData
+        collectionData,
       );
       res.status(201).json(newCollection);
     } catch (error) {
@@ -67,7 +70,7 @@ export const CollectionController = {
       const updateData = req.body;
       const updatedCollection = await CollectionModel.updateCollection(
         id,
-        updateData
+        updateData,
       );
       if (!updatedCollection)
         return res.status(404).json({ error: "Collection not found." });
@@ -89,4 +92,23 @@ export const CollectionController = {
       res.status(500).json({ error: "Failed to delete collection." });
     }
   }) as unknown as RequestHandler,
+
+  createDynamicImage: async (req, res) => {
+    const { baseObjectId } = req.params;
+    try {
+      const imageUrls = await getLayerImageUrls(baseObjectId);
+      const imageBuffer = await mergeImages(imageUrls);
+      const fileUrl = await uploadImageBufferToS3(
+        imageBuffer,
+        `Base/${baseObjectId}.png`,
+      );
+      res.status(200).json({
+        message: "Image generated and uploaded",
+        imageUrl: fileUrl,
+      });
+    } catch (error) {
+      console.error("generateDynamicImage error:", error);
+      res.status(500).json({ error: "Failed to generate image" });
+    }
+  },
 };
