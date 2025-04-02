@@ -12,8 +12,8 @@ router.post("/", CollectionController.createCollection);
 router.put("/:id", CollectionController.updateCollection);
 router.delete("/:id", CollectionController.deleteCollection);
 router.get(
-  "/generate-image/:baseObjectId",
-  CollectionController.createDynamicImage,
+  "/update-image/:baseObjectId",
+  CollectionController.updateDynamicImage,
 );
 
 export default router;
