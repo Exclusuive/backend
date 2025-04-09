@@ -42,7 +42,7 @@ export const CollectionController = {
       }
 
       const collections = await CollectionModel.getCollectionsByObjectIds(
-        objectIds,
+        objectIds
       );
       res.status(200).json(collections);
     } catch (error) {
@@ -58,7 +58,7 @@ export const CollectionController = {
     try {
       const collectionData = req.body;
       const newCollection = await CollectionModel.createCollection(
-        collectionData,
+        collectionData
       );
       res.status(201).json(newCollection);
     } catch (error) {
@@ -73,7 +73,7 @@ export const CollectionController = {
       const updateData = req.body;
       const updatedCollection = await CollectionModel.updateCollection(
         id,
-        updateData,
+        updateData
       );
       if (!updatedCollection)
         return res.status(404).json({ error: "Collection not found." });
