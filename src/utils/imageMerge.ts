@@ -9,7 +9,7 @@ export async function mergeImages(urls: string[]): Promise<Buffer> {
     urls.map(async (url) => {
       const response = await axios.get(url, { responseType: "arraybuffer" });
       return sharp(response.data).resize(width, height).toBuffer();
-    }),
+    })
   );
 
   const composite = buffers.map((buffer) => ({ input: buffer }));

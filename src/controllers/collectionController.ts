@@ -104,13 +104,16 @@ export const CollectionController = {
         id: baseObjectId,
         options: { showContent: true },
       });
-
       const imgUrl = (object.data?.content as any)?.fields?.img_url;
       if (!imgUrl) throw new Error("img_url not found in base object");
 
-      const imageUrls = await getLayerImageUrls(baseObjectId);
+      const imageUrls = await getLayerImageUrls(
+        baseObjectId,
+        (object?.data?.content as any)?.fields?.type?.fields?.collection_id
+      );
       if (imageUrls.length === 0) throw new Error("No image URLs found");
 
+      console.log(imageUrls);
       const imageBuffer = await mergeImages(imageUrls);
 
       const url = new URL(imgUrl);

@@ -3,7 +3,8 @@ import { SuiClient, getFullnodeUrl } from "@mysten/sui/client";
 const client = new SuiClient({ url: getFullnodeUrl("testnet") });
 
 export async function getLayerImageUrls(
-  baseObjectId: string
+  baseObjectId: string,
+  collectionId: string
 ): Promise<string[]> {
   const dynamicFields = await client.getDynamicFields({
     parentId: baseObjectId,
@@ -11,19 +12,35 @@ export async function getLayerImageUrls(
   const objectIds = dynamicFields.data.map((f) => f.objectId);
 
   const objects = await client.multiGetObjects({
-    ids: objectIds,
+    ids: [collectionId, ...objectIds],
     options: { showContent: true },
   });
+  const content = (objects[0].data?.content as any)?.fields;
+  const layerTypes = content.layer_types.fields.contents.map(
+    (entry) => entry.fields.type
+  );
 
-  const imageUrls = objects.map((obj) => {
-    try {
-      return (obj.data?.content as any)?.fields?.value?.fields?.socket?.fields
-        ?.img_url;
-    } catch (e) {
-      console.error("Failed to extract img_url:", e);
-      return null;
-    }
-  });
+  const imageUrls = objects
+    .map((obj) => {
+      try {
+        const layer = (obj.data?.content as any)?.fields?.value?.fields?.socket
+          ?.fields.type?.fields?.type;
+        const imgUrl = (obj.data?.content as any)?.fields?.value?.fields?.socket
+          ?.fields?.img_url;
+        return { layer, imgUrl };
+      } catch (e) {
+        console.error("Failed to extract img_url:", e);
+        return null;
+      }
+    })
+    .filter((url): url is { layer: string; imgUrl: string } => url !== null);
 
-  return imageUrls.filter((url): url is string => typeof url === "string");
+  const orderedImageUrls = layerTypes
+    .map((layerType) => {
+      const found = imageUrls.find((image) => image.layer === layerType);
+      return found ? found.imgUrl : null;
+    })
+    .filter((url) => url !== null);
+
+  return orderedImageUrls;
 }

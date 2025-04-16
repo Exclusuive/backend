@@ -14,6 +14,8 @@ const collectionModel_1 = require("../models/collectionModel");
 const suiHelper_1 = require("../utils/suiHelper");
 const imageMerge_1 = require("../utils/imageMerge");
 const uploadToS3_1 = require("../utils/uploadToS3");
+const client_1 = require("@mysten/sui/client");
+const client = new client_1.SuiClient({ url: (0, client_1.getFullnodeUrl)("testnet") });
 exports.CollectionController = {
     // **Get All Collections**
     getAllCollections: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -93,20 +95,33 @@ exports.CollectionController = {
             res.status(500).json({ error: "Failed to delete collection." });
         }
     })),
-    createDynamicImage: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    updateDynamicImage: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         const { baseObjectId } = req.params;
         try {
-            const imageUrls = yield (0, suiHelper_1.getLayerImageUrls)(baseObjectId);
+            const object = yield client.getObject({
+                id: baseObjectId,
+                options: { showContent: true },
+            });
+            const imgUrl = (_c = (_b = (_a = object.data) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.fields) === null || _c === void 0 ? void 0 : _c.img_url;
+            if (!imgUrl)
+                throw new Error("img_url not found in base object");
+            const imageUrls = yield (0, suiHelper_1.getLayerImageUrls)(baseObjectId, (_h = (_g = (_f = (_e = (_d = object === null || object === void 0 ? void 0 : object.data) === null || _d === void 0 ? void 0 : _d.content) === null || _e === void 0 ? void 0 : _e.fields) === null || _f === void 0 ? void 0 : _f.type) === null || _g === void 0 ? void 0 : _g.fields) === null || _h === void 0 ? void 0 : _h.collection_id);
+            if (imageUrls.length === 0)
+                throw new Error("No image URLs found");
+            console.log(imageUrls);
             const imageBuffer = yield (0, imageMerge_1.mergeImages)(imageUrls);
-            const fileUrl = yield (0, uploadToS3_1.uploadImageBufferToS3)(imageBuffer, `Base/${baseObjectId}.png`);
+            const url = new URL(imgUrl);
+            const s3Key = decodeURIComponent(url.pathname.slice(1));
+            yield (0, uploadToS3_1.uploadImageBufferToS3)(imageBuffer, s3Key);
             res.status(200).json({
-                message: "Image generated and uploaded",
-                imageUrl: fileUrl,
+                message: "Image updated successfully",
+                imageUrl: imgUrl,
             });
         }
         catch (error) {
-            console.error("generateDynamicImage error:", error);
-            res.status(500).json({ error: "Failed to generate image" });
+            console.error("updateDynamicImage error:", error);
+            res.status(500).json({ error: "Failed to update image" });
         }
-    }),
+    })),
 };
