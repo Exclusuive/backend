@@ -31,7 +31,7 @@ app.get("/", (req: Request, res: Response) => {
 // Use Routes
 // app.use("/users", userRoutes);
 app.use("/collections", collectionRoutes);
-// app.use("/s3", s3Routes);
+app.use("/s3", s3Routes);
 // app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Global Error Handler

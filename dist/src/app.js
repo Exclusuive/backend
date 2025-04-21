@@ -40,6 +40,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 const collectionRoutes_1 = __importDefault(require("./routes/collectionRoutes"));
+const s3Routes_1 = __importDefault(require("./routes/s3Routes"));
 const yamljs_1 = __importDefault(require("yamljs"));
 const path_1 = __importDefault(require("path"));
 dotenv.config();
@@ -58,7 +59,7 @@ app.get("/", (req, res) => {
 // Use Routes
 // app.use("/users", userRoutes);
 app.use("/collections", collectionRoutes_1.default);
-// app.use("/s3", s3Routes);
+app.use("/s3", s3Routes_1.default);
 // app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Global Error Handler
 app.use((err, req, res, next) => {
