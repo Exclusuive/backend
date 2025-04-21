@@ -39,10 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
-const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const collectionRoutes_1 = __importDefault(require("./routes/collectionRoutes"));
-const s3Routes_1 = __importDefault(require("./routes/s3Routes"));
-const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const yamljs_1 = __importDefault(require("yamljs"));
 const path_1 = __importDefault(require("path"));
 dotenv.config();
@@ -59,10 +56,10 @@ app.get("/", (req, res) => {
     res.status(200).json({ status: "ok", message: "Server is running" });
 });
 // Use Routes
-app.use("/users", userRoutes_1.default);
+// app.use("/users", userRoutes);
 app.use("/collections", collectionRoutes_1.default);
-app.use("/s3", s3Routes_1.default);
-app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocument));
+// app.use("/s3", s3Routes);
+// app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Global Error Handler
 app.use((err, req, res, next) => {
     console.error("🔥 Error:", err);

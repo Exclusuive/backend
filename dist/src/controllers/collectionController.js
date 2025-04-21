@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CollectionController = void 0;
-const collectionModel_1 = require("../models/collectionModel");
+// import { CollectionModel } from "../models/collectionModel";
 const suiHelper_1 = require("../utils/suiHelper");
 const imageMerge_1 = require("../utils/imageMerge");
 const uploadToS3_1 = require("../utils/uploadToS3");
@@ -18,83 +18,84 @@ const client_1 = require("@mysten/sui/client");
 const client = new client_1.SuiClient({ url: (0, client_1.getFullnodeUrl)("testnet") });
 exports.CollectionController = {
     // **Get All Collections**
-    getAllCollections: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const collections = yield collectionModel_1.CollectionModel.getAllCollections();
-            res.status(200).json(collections);
-        }
-        catch (error) {
-            res.status(500).json({ error: "Failed to fetch collections." });
-        }
-    })),
-    // **Get Collection by ID**
-    getCollectionById: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const { id } = req.params;
-            const collection = yield collectionModel_1.CollectionModel.getCollectionById(id);
-            if (!collection)
-                return res.status(404).json({ error: "Collection not found." });
-            res.status(200).json(collection);
-        }
-        catch (error) {
-            res.status(500).json({ error: "Failed to fetch collection." });
-        }
-    })),
-    // **Get Collections by objectIds**
-    getCollectionsByObjectIds: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const { objectIds } = req.body;
-            if (!Array.isArray(objectIds)) {
-                return res.status(400).json({ error: "objectIds must be an array." });
-            }
-            const collections = yield collectionModel_1.CollectionModel.getCollectionsByObjectIds(objectIds);
-            res.status(200).json(collections);
-        }
-        catch (error) {
-            console.error("Error in getCollectionsByObjectIds:", error);
-            res
-                .status(500)
-                .json({ error: "Failed to fetch collections by objectIds." });
-        }
-    })),
-    // **Create New Collection**
-    createCollection: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const collectionData = req.body;
-            const newCollection = yield collectionModel_1.CollectionModel.createCollection(collectionData);
-            res.status(201).json(newCollection);
-        }
-        catch (error) {
-            res.status(500).json({ error: "Failed to create collection." });
-        }
-    })),
-    // **Update Collection**
-    updateCollection: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const { id } = req.params;
-            const updateData = req.body;
-            const updatedCollection = yield collectionModel_1.CollectionModel.updateCollection(id, updateData);
-            if (!updatedCollection)
-                return res.status(404).json({ error: "Collection not found." });
-            res.status(200).json(updatedCollection);
-        }
-        catch (error) {
-            res.status(500).json({ error: "Failed to update collection." });
-        }
-    })),
-    // **Delete Collection**
-    deleteCollection: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const { id } = req.params;
-            const deletedCollection = yield collectionModel_1.CollectionModel.deleteCollection(id);
-            if (!deletedCollection)
-                return res.status(404).json({ error: "Collection not found." });
-            res.status(200).json(deletedCollection);
-        }
-        catch (error) {
-            res.status(500).json({ error: "Failed to delete collection." });
-        }
-    })),
+    // getAllCollections: (async (req: Request, res: Response) => {
+    //   try {
+    //     const collections = await CollectionModel.getAllCollections();
+    //     res.status(200).json(collections);
+    //   } catch (error) {
+    //     res.status(500).json({ error: "Failed to fetch collections." });
+    //   }
+    // }) as RequestHandler,
+    // // **Get Collection by ID**
+    // getCollectionById: (async (req: Request, res: Response) => {
+    //   try {
+    //     const { id } = req.params;
+    //     const collection = await CollectionModel.getCollectionById(id);
+    //     if (!collection)
+    //       return res.status(404).json({ error: "Collection not found." });
+    //     res.status(200).json(collection);
+    //   } catch (error) {
+    //     res.status(500).json({ error: "Failed to fetch collection." });
+    //   }
+    // }) as unknown as RequestHandler,
+    // // **Get Collections by objectIds**
+    // getCollectionsByObjectIds: (async (req: Request, res: Response) => {
+    //   try {
+    //     const { objectIds } = req.body;
+    //     if (!Array.isArray(objectIds)) {
+    //       return res.status(400).json({ error: "objectIds must be an array." });
+    //     }
+    //     const collections = await CollectionModel.getCollectionsByObjectIds(
+    //       objectIds
+    //     );
+    //     res.status(200).json(collections);
+    //   } catch (error) {
+    //     console.error("Error in getCollectionsByObjectIds:", error);
+    //     res
+    //       .status(500)
+    //       .json({ error: "Failed to fetch collections by objectIds." });
+    //   }
+    // }) as unknown as RequestHandler,
+    // // **Create New Collection**
+    // createCollection: (async (req: Request, res: Response) => {
+    //   try {
+    //     const collectionData = req.body;
+    //     const newCollection = await CollectionModel.createCollection(
+    //       collectionData
+    //     );
+    //     res.status(201).json(newCollection);
+    //   } catch (error) {
+    //     res.status(500).json({ error: "Failed to create collection." });
+    //   }
+    // }) as RequestHandler,
+    // // **Update Collection**
+    // updateCollection: (async (req: Request, res: Response) => {
+    //   try {
+    //     const { id } = req.params;
+    //     const updateData = req.body;
+    //     const updatedCollection = await CollectionModel.updateCollection(
+    //       id,
+    //       updateData
+    //     );
+    //     if (!updatedCollection)
+    //       return res.status(404).json({ error: "Collection not found." });
+    //     res.status(200).json(updatedCollection);
+    //   } catch (error) {
+    //     res.status(500).json({ error: "Failed to update collection." });
+    //   }
+    // }) as unknown as RequestHandler,
+    // // **Delete Collection**
+    // deleteCollection: (async (req: Request, res: Response) => {
+    //   try {
+    //     const { id } = req.params;
+    //     const deletedCollection = await CollectionModel.deleteCollection(id);
+    //     if (!deletedCollection)
+    //       return res.status(404).json({ error: "Collection not found." });
+    //     res.status(200).json(deletedCollection);
+    //   } catch (error) {
+    //     res.status(500).json({ error: "Failed to delete collection." });
+    //   }
+    // }) as unknown as RequestHandler,
     updateDynamicImage: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         const { baseObjectId } = req.params;

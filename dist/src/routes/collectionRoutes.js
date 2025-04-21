@@ -5,11 +5,11 @@ const express_1 = require("express");
 const collectionController_1 = require("../controllers/collectionController");
 const router = (0, express_1.Router)();
 // **Collection Routes**
-router.get("/", collectionController_1.CollectionController.getAllCollections);
-router.get("/:id", collectionController_1.CollectionController.getCollectionById);
-router.post("/by-object-ids", collectionController_1.CollectionController.getCollectionsByObjectIds);
-router.post("/", collectionController_1.CollectionController.createCollection);
-router.put("/:id", collectionController_1.CollectionController.updateCollection);
-router.delete("/:id", collectionController_1.CollectionController.deleteCollection);
+// router.get("/", CollectionController.getAllCollections);
+// router.get("/:id", CollectionController.getCollectionById);
+// router.post("/by-object-ids", CollectionController.getCollectionsByObjectIds);
+// router.post("/", CollectionController.createCollection);
+// router.put("/:id", CollectionController.updateCollection);
+// router.delete("/:id", CollectionController.deleteCollection);
 router.get("/update-image/:baseObjectId", collectionController_1.CollectionController.updateDynamicImage);
 exports.default = router;

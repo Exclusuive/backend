@@ -5,15 +5,15 @@ import { CollectionController } from "../controllers/collectionController";
 const router = Router();
 
 // **Collection Routes**
-router.get("/", CollectionController.getAllCollections);
-router.get("/:id", CollectionController.getCollectionById);
-router.post("/by-object-ids", CollectionController.getCollectionsByObjectIds);
-router.post("/", CollectionController.createCollection);
-router.put("/:id", CollectionController.updateCollection);
-router.delete("/:id", CollectionController.deleteCollection);
+// router.get("/", CollectionController.getAllCollections);
+// router.get("/:id", CollectionController.getCollectionById);
+// router.post("/by-object-ids", CollectionController.getCollectionsByObjectIds);
+// router.post("/", CollectionController.createCollection);
+// router.put("/:id", CollectionController.updateCollection);
+// router.delete("/:id", CollectionController.deleteCollection);
 router.get(
   "/update-image/:baseObjectId",
-  CollectionController.updateDynamicImage,
+  CollectionController.updateDynamicImage
 );
 
 export default router;
