@@ -43,6 +43,7 @@ const collectionRoutes_1 = __importDefault(require("./routes/collectionRoutes"))
 const s3Routes_1 = __importDefault(require("./routes/s3Routes"));
 const yamljs_1 = __importDefault(require("yamljs"));
 const path_1 = __importDefault(require("path"));
+const zkRoutes_1 = __importDefault(require("./routes/zkRoutes"));
 dotenv.config();
 const app = (0, express_1.default)();
 app.set("port", 8080);
@@ -60,6 +61,7 @@ app.get("/", (req, res) => {
 // app.use("/users", userRoutes);
 app.use("/collections", collectionRoutes_1.default);
 app.use("/s3", s3Routes_1.default);
+app.use("/zk", zkRoutes_1.default);
 // app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Global Error Handler
 app.use((err, req, res, next) => {

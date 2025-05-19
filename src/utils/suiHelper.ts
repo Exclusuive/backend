@@ -23,10 +23,13 @@ export async function getLayerImageUrls(
   const imageUrls = objects
     .map((obj) => {
       try {
+        console.log(obj.data?.content);
         const layer = (obj.data?.content as any)?.fields?.value?.fields?.socket
           ?.fields.type?.fields?.type;
         const imgUrl = (obj.data?.content as any)?.fields?.value?.fields?.socket
           ?.fields?.img_url;
+
+        console.log(layer, imgUrl);
         return { layer, imgUrl };
       } catch (e) {
         console.error("Failed to extract img_url:", e);

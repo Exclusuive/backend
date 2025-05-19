@@ -8,6 +8,7 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import path from "path";
 import axios from "axios";
+import zkRoutes from "./routes/zkRoutes";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.get("/", (req: Request, res: Response) => {
 // app.use("/users", userRoutes);
 app.use("/collections", collectionRoutes);
 app.use("/s3", s3Routes);
+app.use("/zk", zkRoutes);
 // app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Global Error Handler

@@ -27,10 +27,12 @@ function getLayerImageUrls(baseObjectId, collectionId) {
         const layerTypes = content.layer_types.fields.contents.map((entry) => entry.fields.type);
         const imageUrls = objects
             .map((obj) => {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
             try {
-                const layer = (_h = (_g = (_f = (_e = (_d = (_c = (_b = (_a = obj.data) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.fields) === null || _c === void 0 ? void 0 : _c.value) === null || _d === void 0 ? void 0 : _d.fields) === null || _e === void 0 ? void 0 : _e.socket) === null || _f === void 0 ? void 0 : _f.fields.type) === null || _g === void 0 ? void 0 : _g.fields) === null || _h === void 0 ? void 0 : _h.type;
-                const imgUrl = (_q = (_p = (_o = (_m = (_l = (_k = (_j = obj.data) === null || _j === void 0 ? void 0 : _j.content) === null || _k === void 0 ? void 0 : _k.fields) === null || _l === void 0 ? void 0 : _l.value) === null || _m === void 0 ? void 0 : _m.fields) === null || _o === void 0 ? void 0 : _o.socket) === null || _p === void 0 ? void 0 : _p.fields) === null || _q === void 0 ? void 0 : _q.img_url;
+                console.log((_a = obj.data) === null || _a === void 0 ? void 0 : _a.content);
+                const layer = (_j = (_h = (_g = (_f = (_e = (_d = (_c = (_b = obj.data) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.fields) === null || _d === void 0 ? void 0 : _d.value) === null || _e === void 0 ? void 0 : _e.fields) === null || _f === void 0 ? void 0 : _f.socket) === null || _g === void 0 ? void 0 : _g.fields.type) === null || _h === void 0 ? void 0 : _h.fields) === null || _j === void 0 ? void 0 : _j.type;
+                const imgUrl = (_r = (_q = (_p = (_o = (_m = (_l = (_k = obj.data) === null || _k === void 0 ? void 0 : _k.content) === null || _l === void 0 ? void 0 : _l.fields) === null || _m === void 0 ? void 0 : _m.value) === null || _o === void 0 ? void 0 : _o.fields) === null || _p === void 0 ? void 0 : _p.socket) === null || _q === void 0 ? void 0 : _q.fields) === null || _r === void 0 ? void 0 : _r.img_url;
+                console.log(layer, imgUrl);
                 return { layer, imgUrl };
             }
             catch (e) {
