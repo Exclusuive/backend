@@ -17,19 +17,16 @@ const transactions_1 = require("@mysten/sui/transactions");
 const client_1 = require("@mysten/sui/client");
 const keypair = ed25519_1.Ed25519Keypair.fromSecretKey(process.env.SUI_PRIVATE_KEY);
 const suiClient = new client_1.SuiClient({ url: "https://rpc-testnet.suiscan.xyz:443" });
-const packageId = "0x2e40cdbaf7773b1d562b22b030d7e19518d8ae911700b93453d7b69fbd745d2d";
-const collectionId = "0x784185495cb5649ec654522e54a862d6df84c21aaf21511d7dc9e1b173f0a2da";
-const collectionCapId = "0xc529c0ccfc795183259eeaa0827b5434b00eff9c86a704bf77dd0ae7f731db80";
 // --- 컨트롤러 정의
 exports.ZkSendController = {
     mintPami: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const tx = new transactions_1.Transaction();
         const link = new zksend_1.ZkSendLinkBuilder({
-            host: "http://localhost:5173/event",
+            host: "https://dokpami.onrender.com/event",
             sender: keypair.getPublicKey().toSuiAddress(),
             network: "testnet",
         });
-        link.addClaimableMist(BigInt(1000));
+        link.addClaimableMist(BigInt(60000000));
         try {
             yield link.create({
                 signer: keypair,
