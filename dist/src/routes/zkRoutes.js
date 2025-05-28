@@ -12,4 +12,5 @@ router.get("/test", (req, res) => {
 router.post("/zk-send/sponsor", zkSendController_1.ZkSendController.createSponsoredTransaction);
 router.post("/zk-send/execute", zkSendController_1.ZkSendController.executeSponsoredTransaction);
 router.post("/zk-send/mintPami", zkSendController_1.ZkSendController.mintPami);
+router.post("/zk-send/balanceGame", zkSendController_1.ZkSendController.balanceGame);
 exports.default = router;

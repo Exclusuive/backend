@@ -74,4 +74,25 @@ exports.ZkSendController = {
                 .json({ error: "Could not create sponsored transaction block." });
         }
     })),
+    balanceGame: ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const { user, name } = req.body;
+        const suiClient = new client_1.SuiClient({ url: (0, client_1.getFullnodeUrl)("mainnet") });
+        const packageId = "0x97d5691c660a2c7876868ff30a057749d921b2c54579c9972c7f080b349c669d";
+        const imageUrl = `https://dokpaminft-season2.s3.us-east-1.amazonaws.com/balanceGame/${name}.png`;
+        const tx = new transactions_1.Transaction();
+        tx.moveCall({
+            target: `${packageId}::simple_nft::mint`,
+            arguments: [
+                tx.pure.string(name),
+                tx.pure.string(imageUrl),
+                tx.pure.address(user),
+            ],
+        });
+        const result = yield suiClient.signAndExecuteTransaction({
+            signer: keypair,
+            transaction: tx,
+        });
+        yield suiClient.waitForTransaction({ digest: result.digest });
+        res.status(200).json({ digest: result.digest });
+    })),
 };

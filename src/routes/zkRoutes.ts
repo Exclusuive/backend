@@ -8,5 +8,6 @@ router.get("/test", (req: express.Request, res: express.Response) => {
 router.post("/zk-send/sponsor", ZkSendController.createSponsoredTransaction);
 router.post("/zk-send/execute", ZkSendController.executeSponsoredTransaction);
 router.post("/zk-send/mintPami", ZkSendController.mintPami);
+router.post("/zk-send/balanceGame", ZkSendController.balanceGame);
 
 export default router;
